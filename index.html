@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment Operations Analytics</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <div>
+          <div class="brand-name">PayOps</div>
+          <div class="brand-subtitle">Internal Analytics</div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Dashboard sections">
+        <button class="nav-item active" data-page="overview">Overview</button>
+        <button class="nav-item" data-page="operations">Payment Ops</button>
+        <button class="nav-item" data-page="customers">Customers</button>
+        <button class="nav-item" data-page="subscriptions">Subscriptions</button>
+        <button class="nav-item" data-page="failures">Failures</button>
+        <button class="nav-item" data-page="insights">Insights</button>
+      </nav>
+      <div class="sidebar-card">
+        <div class="muted">Dataset</div>
+        <strong id="datasetStatus">Loading CSV</strong>
+        <label class="file-pill">
+          Upload CSV
+          <input id="csvUpload" type="file" accept=".csv">
+        </label>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 id="pageTitle">Executive Overview</h1>
+          <p id="pageSubtitle">Enterprise payment health, revenue, and reliability metrics.</p>
+        </div>
+        <div class="actions">
+          <input id="searchInput" class="search" type="search" placeholder="Search transactions, banks, gateways">
+          <button id="exportCsvBtn" class="btn secondary">Export CSV</button>
+          <button id="exportPdfBtn" class="btn primary">Export PDF</button>
+        </div>
+      </header>
+
+      <section class="filters">
+        <label>Date From<input id="dateFrom" type="date"></label>
+        <label>Date To<input id="dateTo" type="date"></label>
+        <label>Bank<select id="bankFilter"></select></label>
+        <label>Gateway<select id="gatewayFilter"></select></label>
+        <label>Mode<select id="modeFilter"></select></label>
+        <label>Status<select id="statusFilter"></select></label>
+        <label>Segment<select id="segmentFilter"></select></label>
+        <label>Age Group<select id="ageFilter"></select></label>
+        <label>State<select id="stateFilter"></select></label>
+        <button id="resetFilters" class="btn ghost">Reset</button>
+      </section>
+
+      <section id="loadingPanel" class="loading-panel">
+        <div class="loader"></div>
+        <div>
+          <strong>Preparing analytics workspace</strong>
+          <p id="loadProgress">Reading payment operations dataset...</p>
+        </div>
+      </section>
+
+      <section id="dashboardContent" class="dashboard-content hidden">
+        <section class="page active" data-page-panel="overview">
+          <div class="kpi-grid" id="overviewKpis"></div>
+          <div class="chart-grid">
+            <article class="card wide"><div class="card-head"><h2>Daily Transaction Trend</h2></div><canvas id="dailyTrend"></canvas></article>
+            <article class="card wide"><div class="card-head"><h2>Monthly Revenue Trend</h2></div><canvas id="monthlyRevenue"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Payment Mode Distribution</h2></div><canvas id="modeDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Transaction Status</h2></div><canvas id="statusDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Top Banks by Volume</h2></div><canvas id="topBanks"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Top Categories by Revenue</h2></div><canvas id="topCategories"></canvas></article>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="operations">
+          <div class="kpi-grid" id="operationsKpis"></div>
+          <div class="chart-grid">
+            <article class="card"><div class="card-head"><h2>Bank-wise Success Rate</h2></div><canvas id="bankSuccess"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Gateway Performance</h2></div><canvas id="gatewayPerformance"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Status by Gateway</h2></div><canvas id="statusByGateway"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Processing Time Distribution</h2></div><canvas id="processingDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Retry Count Distribution</h2></div><canvas id="retryDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Failed Transactions Trend</h2></div><canvas id="failedTrend"></canvas></article>
+          </div>
+          <div class="card table-card">
+            <div class="card-head"><h2>Transaction Explorer</h2><span id="tableCount" class="muted"></span></div>
+            <div class="table-wrap">
+              <table id="transactionTable"></table>
+            </div>
+            <div class="pagination">
+              <button id="prevPage" class="btn secondary">Previous</button>
+              <span id="pageInfo"></span>
+              <button id="nextPage" class="btn secondary">Next</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="customers">
+          <div class="kpi-grid" id="customerKpis"></div>
+          <div class="chart-grid">
+            <article class="card"><div class="card-head"><h2>Gender Distribution</h2></div><canvas id="genderDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Age Group Distribution</h2></div><canvas id="ageDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Customer Segment</h2></div><canvas id="segmentDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Income Distribution</h2></div><canvas id="incomeDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Expense Distribution</h2></div><canvas id="expenseDistribution"></canvas></article>
+            <article class="card"><div class="card-head"><h2>City-wise Transactions</h2></div><canvas id="cityTransactions"></canvas></article>
+            <article class="card wide"><div class="card-head"><h2>State-wise Transactions</h2></div><canvas id="stateTransactions"></canvas></article>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="subscriptions">
+          <div class="kpi-grid" id="subscriptionKpis"></div>
+          <div class="chart-grid">
+            <article class="card"><div class="card-head"><h2>Subscribed vs Non-Subscribed</h2></div><canvas id="subscriptionSplit"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Subscription Revenue</h2></div><canvas id="subscriptionRevenue"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Subscription Start Trend</h2></div><canvas id="subscriptionStartTrend"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Subscription Amount Distribution</h2></div><canvas id="subscriptionAmountDistribution"></canvas></article>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="failures">
+          <div class="kpi-grid" id="failureKpis"></div>
+          <div class="chart-grid">
+            <article class="card"><div class="card-head"><h2>Failed Transactions by Bank</h2></div><canvas id="failedByBank"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Failed Transactions by Gateway</h2></div><canvas id="failedByGateway"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Error Code Frequency</h2></div><canvas id="errorFrequency"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Retry Count Analysis</h2></div><canvas id="retryFailure"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Failed Processing Time</h2></div><canvas id="failedProcessing"></canvas></article>
+            <article class="card"><div class="card-head"><h2>Top Failure Reasons</h2></div><canvas id="failureReasons"></canvas></article>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="insights">
+          <div class="insight-grid" id="insightGrid"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
