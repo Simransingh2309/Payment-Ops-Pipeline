@@ -14,6 +14,7 @@ An end-to-end data analytics project demonstrating data cleaning, preprocessing,
 
 </p>
 
+## Core Features
 | Capability    | Description                                   |
 | ------------- | --------------------------------------------- |
 | Data Cleaning | Standardized raw payment records              |
