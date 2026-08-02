@@ -29,5 +29,3 @@ An end-to-end data analytics project demonstrating data cleaning, preprocessing,
 - Identified transaction distribution patterns.
 - Generated visual reports to support business decisions.
 - Established a reusable analytics workflow.
-
-
